@@ -1,3 +1,4 @@
+import { useSocket } from '@/context/SocketProvider';
 import { Bomb, Rocket, StopCircle } from 'lucide-react'
 import React,{useRef,useEffect} from 'react'
 
@@ -7,8 +8,9 @@ interface PowerUpWindowProps{
   typedText:string;
   setCorrectCharacters:React.Dispatch<React.SetStateAction<number>>;
   setTypedText:React.Dispatch<React.SetStateAction<string>>;
-  inputRef:React.RefObject<HTMLInputElement>;
-  setIsTypingStarted:React.Dispatch<React.SetStateAction<boolean>>
+  inputRef:React.RefObject<HTMLTextAreaElement>;
+  setIsTypingStarted:React.Dispatch<React.SetStateAction<boolean>>;
+  roomId?:string
 }
 
 const PowerUpWndow = ({
@@ -18,10 +20,12 @@ const PowerUpWndow = ({
   typedText,
   setTypedText,
   inputRef,
-  setIsTypingStarted
+  setIsTypingStarted,
+  roomId
   }:PowerUpWindowProps) => {
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const socket = useSocket();
 
   const handleRocket=()=>{
     if (correctCharacters < 10) {
@@ -38,29 +42,63 @@ const PowerUpWndow = ({
   }
 
   const handleBomb = ()=>{
-    if (correctCharacters < 15) {
-      return;
-    }
-    setCorrectCharacters((prev) => prev - 15);
+    console.log("Bomb received");
     // Remove the last 10 characters from typedText
-    setTypedText((prev) => prev.slice(0, -10));
+    setTypedText((prev) => {
+      if (prev.length <= 10) {
+        return '';
+      } else {
+        return prev.slice(0, -10);
+      }
+    });
 
     inputRef.current?.focus();
   }
 
   const handleStop=()=>{
-    if (correctCharacters < 20) {
-      return;
-    }
+    console.log("Typing halted");
     setIsTypingStarted(false);
-    setCorrectCharacters((prev) => prev - 20);
-
+    
     timerRef.current = setTimeout(()=>{
       setIsTypingStarted(true);
-    },5000);
+    },10000);
 
     inputRef.current?.focus();
   }
+
+  const emitBomb=()=>{
+    console.log("room id",roomId)
+    if (correctCharacters < 15) {
+      return;
+    }
+    setCorrectCharacters((prev) => prev - 15);
+    if(socket){
+      socket.emit('bombPlayers',{roomId})
+    }
+  }
+  const emitStop=()=>{
+    console.log("Stop emitted")
+    if (correctCharacters < 10) {
+      return;
+    }
+    setCorrectCharacters((prev) => prev - 10);
+    if(socket){
+      socket.emit('stopPlayers',{roomId})
+    }
+  }
+
+  useEffect(()=>{
+
+    if(socket){
+      socket.on('bombPlayers',()=>{
+        handleBomb();
+      })
+      socket.on('stopPlayers',()=>{
+        handleStop();
+      })
+    }
+
+  },[socket])
 
   useEffect(()=>{
     return ()=>{
@@ -78,13 +116,13 @@ const PowerUpWndow = ({
         <Rocket className='h-8 w-8'/>
       </button>
       <button 
-        onClick={handleBomb}
+        onClick={emitBomb}
         disabled={correctCharacters<15}
         className='rounded-full border-white border-4 border-dashed p-3 cursor-pointer'>
         <Bomb className='h-8 w-8'/>
       </button>
       <button
-        onClick={handleStop}
+        onClick={emitStop}
         disabled={correctCharacters<20}
         className='rounded-full border-white border-4 border-dashed p-3 cursor-pointer'>
         <StopCircle className='h-8 w-8'/>
