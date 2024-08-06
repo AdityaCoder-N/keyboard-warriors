@@ -1,8 +1,9 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { v4 as uuidv4 } from 'uuid';
 import Link from 'next/link';
+import RoomIdModal from '@/components/RoomIdModal';
 
 const Page = () => {
 
@@ -13,6 +14,7 @@ const Page = () => {
     router.push(`/play/${uniqueId}`)
   }
 
+  const [openModal,setOpenModal] = useState<boolean>(false);
 
   return (
     <div className='flex flex-col items-center h-full w-full'>
@@ -21,8 +23,10 @@ const Page = () => {
             <button>
                 <Link href='/play/practice'>Practice Yourself</Link>
             </button>
-            <button disabled>Join a room (coming soon)</button>
+            <button onClick={()=>setOpenModal(!openModal)}>Join private Room</button>
+            <button disabled>Join a Public room (coming soon)</button>
         </div>
+        {openModal && <RoomIdModal setOpenModal={setOpenModal}/>}
     </div>
   )
 }

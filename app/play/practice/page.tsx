@@ -1,11 +1,11 @@
 'use client'
 import React, { useState, useEffect,useRef } from 'react';
 import ParagraphDisplay from '../../../components/ParagraphDisplay';
-import PowerUpWindow from '../../../components/PowerUpWndow'
+
 const Page = () => {
   const paragraphs = [
-    "Sarah watched the whirlpool mesmerized. She couldn't take her eyes off the water swirling around and around. She stuck in small twigs and leaves to watch the whirlpool catch them and then suck them down. It bothered her more than a little bit that this could also be used as a metaphor for her life.",
-    "Waiting and watching. It was all she had done for the past weeks. When you’re locked in a room with nothing but food and drink, that’s about all you can do anyway. She watched as birds flew past the window bolted shut. She couldn’t reach it if she wanted too, with that hole in the floor. She thought she could escape through it but three stories is a bit far down."
+    "Sarah watched.",
+    "Waiting and watching."
   ];
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -17,6 +17,10 @@ const Page = () => {
   const [isCorrect, setIsCorrect] = useState<boolean>(true);
 
   const [correctCharacters,setCorrectCharacters] = useState<number>(0);
+  const [elapsedTime, setElapsedTime] = useState<number>(0);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const [finalScore,setFinalScore] = useState<number>(0);
 
   useEffect(() => {
     const countdownInterval = setInterval(() => {
@@ -24,6 +28,7 @@ const Page = () => {
         if (prev === 1) {
           clearInterval(countdownInterval);
           setIsTypingStarted(true);
+          startTimer();
         }
         return prev - 1;
       });
@@ -33,15 +38,20 @@ const Page = () => {
   }, []);
 
   const handleKeyPress = (e:React.KeyboardEvent<HTMLInputElement>) => {
-    
     const { key } = e;
     if (!isTypingStarted || key==='CapsLock') return;
-    
-    
+  
+    const nextTypedTextLength = typedText.length + 1;
     if (key === currentParagraph[typedText.length]) {
       setTypedText((prev) => prev + key);
       setIsCorrect(true);
       setCorrectCharacters((prev)=>prev+1);
+
+      if (nextTypedTextLength === currentParagraph.length) {
+        setIsTypingStarted(false); // Stop typing
+        stopTimer();
+
+      }
     } else {
       setIsCorrect(false)
       // play sound
@@ -49,10 +59,40 @@ const Page = () => {
     }
   };
 
+  const startTimer = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+    timerRef.current = setInterval(() => {
+      setElapsedTime((prev) => prev + 1);
+    }, 1000);
+  };
+  const stopTimer = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+    calculateFinalScore();
+  };
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+  const calculateFinalScore=()=>{
+    const words = currentParagraph.split(" ").length;
+    const timeTaken = elapsedTime/60;
+
+    let finalScore = Math.floor(words/timeTaken);
+    setFinalScore(finalScore);
+  }
   return (
     <div className="min-h-screen bg-blue-500 w-full h-full flex flex-col items-center">
       <div className="w-[60%]">
-        <h1 className="mt-12 my-4 text-3xl font-bold">Start Typing in: {countdown}</h1>
+        <div className='mt-12 my-4 flex items-center justify-between'>
+          <h1 className=" text-3xl font-bold">{
+          countdown>0?`Start Typing in: ${countdown}`:'Start Typing'} </h1>
+          <h3 className='text-xl font-semibold'>{formatTime(elapsedTime)}</h3>
+        </div>
 
         <ParagraphDisplay paragraph={currentParagraph} typedText={typedText} isCorrect={isCorrect}/>
 
@@ -64,7 +104,9 @@ const Page = () => {
           autoFocus
         />
 
-        <PowerUpWindow correctCharacters={correctCharacters} paragraph={currentParagraph} typedText={typedText} setCorrectCharacters={setCorrectCharacters} setTypedText={setTypedText} inputRef={inputRef} setIsTypingStarted={setIsTypingStarted}/>
+        {finalScore!==0 && <div className='mt-8'>
+          Final Score : {finalScore} WPM
+        </div>}
       </div>
     </div>
   );
