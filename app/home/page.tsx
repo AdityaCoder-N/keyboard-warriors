@@ -1,32 +1,100 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { v4 as uuidv4 } from 'uuid';
 import Link from 'next/link';
+import Image from 'next/image';
+import bgImage from '../../assets/Background_space.png'
+
 import RoomIdModal from '@/components/RoomIdModal';
+import { ArrowBigRight } from 'lucide-react';
+import { signOut } from 'next-auth/react';
 
 const Page = () => {
 
   const router= useRouter();
+
+  const [openModal,setOpenModal] = useState<boolean>(false);
+  const [currentIndex,setCurrentIndex] = useState<number>(0);
+
+  const menuOptions = [
+    { label: "Invite Others to Play", action: () => createRoom() },
+    { label: "Practice Yourself", action: () => router.push('/play/practice') },
+    { label: "Join Private Room", action: () => setOpenModal(!openModal) },
+    { label: "Join a Public Room (Coming Soon)", action: () => alert("Feature coming soon!") },
+    { label: "Log Out", action: () => signOut({ callbackUrl: '/' }) }
+  ];
 
   const createRoom = ()=>{
     const uniqueId = uuidv4();
     router.push(`/play/${uniqueId}`)
   }
 
-  const [openModal,setOpenModal] = useState<boolean>(false);
+  let optionAudio = new Audio('/assets/gameboy-pluck-41265.mp3');
+
+  const moveDown = () => {
+    optionAudio.currentTime=0;
+    optionAudio.play();
+    setCurrentIndex(prev => (prev < menuOptions.length - 1) ? prev + 1 : prev);
+  }
+
+  const moveUp = () => {
+    optionAudio.currentTime=0;
+    optionAudio.play();
+    setCurrentIndex(prev => (prev > 0) ? prev - 1 : prev);
+  }
+
+  const selectOption = () => {
+    menuOptions[currentIndex].action();
+  }
+
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      switch(e.key) {
+        case 'ArrowDown':
+          moveDown();
+          break;
+        case 'ArrowUp':
+          moveUp();
+          break;
+        case 'Enter':
+          selectOption();
+          break;
+        default:
+          break;
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyPress);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    }
+  }, []);
 
   return (
-    <div className='flex flex-col items-center h-full w-full'>
-        <div className='w-[90%] flex flex-col gap-8'>
-            <button onClick={createRoom}>Invite Others to Play</button>
-            <button>
-                <Link href='/play/practice'>Practice Yourself</Link>
-            </button>
-            <button onClick={()=>setOpenModal(!openModal)}>Join private Room</button>
-            <button disabled>Join a Public room (coming soon)</button>
+    <div className='min-h-screen w-full relative overflow-hidden'>
+      <Image src={bgImage} alt="space" className="h-screen w-full object-cover absolute top-0 left-0 z-0" />
+
+      <div className='relative z-50 min-h-screen w-full py-12 flex flex-col items-center'>
+        <div className="font-poxast md:text-[80px] md:leading-[120px] font-bold text-white text-center w-2/3">
+          Keyboard Warriors
         </div>
-        {openModal && <RoomIdModal setOpenModal={setOpenModal}/>}
+
+        <div className='flex flex-col items-center gap-8 text-white text-2xl mt-12 font-minecraft font-semibold transition-all'>
+          {menuOptions.map((option, index) => (
+            <button 
+              key={index} 
+              onClick={option.action}
+              className='flex gap-2 items-center'
+            > 
+              <ArrowBigRight className={`${currentIndex === index ? 'opacity-100' : 'opacity-0'}`} /> 
+              <span className={`${index==3?'text-zinc-400':''}`}>{option.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+      {openModal && <RoomIdModal setOpenModal={setOpenModal}/>}
     </div>
   )
 }

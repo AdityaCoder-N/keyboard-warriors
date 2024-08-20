@@ -1,6 +1,8 @@
 import { useSocket } from '@/context/SocketProvider';
 import { Bomb, Rocket, StopCircle } from 'lucide-react'
-import React,{useRef,useEffect} from 'react'
+import React,{useRef,useEffect, useState} from 'react'
+import { useToast } from './ui/use-toast';
+import CountDownToast from './CountDownToast';
 
 interface PowerUpWindowProps{
   correctCharacters:number;
@@ -26,6 +28,9 @@ const PowerUpWndow = ({
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const socket = useSocket();
+  const {toast} = useToast();
+
+  const [countdownToast,setCountdownToast] = useState(false);
 
   const handleRocket=()=>{
     if (correctCharacters < 10) {
@@ -38,12 +43,33 @@ const PowerUpWndow = ({
     const stringToAdd = paragraph.substring(currentIndex, endIndex);
     setTypedText((prev) => prev + stringToAdd);
 
+    if (inputRef.current) {
+      inputRef.current.value = inputRef.current.value+stringToAdd;
+    }
     inputRef.current?.focus();
   }
 
+  
+  const bombSound = new Audio('/assets/Chunky Explosion.mp3');
   const handleBomb = ()=>{
-    console.log("Bomb received");
+    
+    bombSound.currentTime=0;
+    bombSound.play();
+
+    toast({
+      title:'Bomb Received',
+      description:'You will go 10 characters back.',
+      variant:"destructive"
+    })
     // Remove the last 10 characters from typedText
+    if (inputRef.current) {
+      const currentText= inputRef.current.value;
+      if (currentText.length <= 10) {
+        inputRef.current.value = "";
+      } else {
+        inputRef.current.value= currentText.slice(0, -10);
+      }
+    }
     setTypedText((prev) => {
       if (prev.length <= 10) {
         return '';
@@ -51,6 +77,7 @@ const PowerUpWndow = ({
         return prev.slice(0, -10);
       }
     });
+    
 
     inputRef.current?.focus();
   }
@@ -58,10 +85,11 @@ const PowerUpWndow = ({
   const handleStop=()=>{
     console.log("Typing halted");
     setIsTypingStarted(false);
-    
+    setCountdownToast(true);
+
     timerRef.current = setTimeout(()=>{
       setIsTypingStarted(true);
-    },10000);
+    },5000);
 
     inputRef.current?.focus();
   }
@@ -108,25 +136,37 @@ const PowerUpWndow = ({
   },[])
 
   return (
-    <div className='flex w-full mt-4 items-center justify-center gap-8 text-white'>
-      <button
-        disabled={correctCharacters<10}
-        onClick={handleRocket}
-        className='rounded-full border-white border-4 border-dashed p-3 cursor-pointer'>
-        <Rocket className='h-8 w-8'/>
-      </button>
-      <button 
-        onClick={emitBomb}
-        disabled={correctCharacters<15}
-        className='rounded-full border-white border-4 border-dashed p-3 cursor-pointer'>
-        <Bomb className='h-8 w-8'/>
-      </button>
-      <button
-        onClick={emitStop}
-        disabled={correctCharacters<20}
-        className='rounded-full border-white border-4 border-dashed p-3 cursor-pointer'>
-        <StopCircle className='h-8 w-8'/>
-      </button>
+    <div className='flex w-full p-4 items-center justify-center gap-8 text-black'>
+      {countdownToast && <CountDownToast time={5} message='Player Stopped typing for' onCountdownEnd={()=>setCountdownToast(false)}/>}
+      <div className='flex flex-col gap-2 items-center'>
+        <button
+          disabled={correctCharacters<10}
+          onClick={handleRocket}
+          className={`transition-all border-black border-4  p-3 cursor-pointer hover:translate-y-[-5px] ${correctCharacters>=20?'box bg-amber-300 border-amber-500 border-solid':'border-dashed'}`}>
+          <Rocket className='h-8 w-8'/>
+        </button>
+        <span>20 Points</span>
+      </div>
+
+      <div className='flex flex-col gap-2 items-center'>
+        <button 
+          onClick={emitBomb}
+          disabled={correctCharacters<15}
+          className={`border-black border-4 p-3 cursor-pointer hover:translate-y-[-5px] transition-all ${correctCharacters>=30?'box bg-amber-300 border-amber-500 border-solid':'border-dashed'}`}>
+          <Bomb className='h-8 w-8'/>
+        </button>
+        <span>30 Points</span>
+      </div>
+
+      <div className='flex flex-col gap-2 items-center'>
+        <button
+          onClick={emitStop}
+          disabled={correctCharacters<20}
+          className={`border-black border-4 p-3 cursor-pointer hover:translate-y-[-5px] transition-all ${correctCharacters>=35?'box bg-amber-300 border-amber-500 border-solid':'border-dashed'}`}>
+          <StopCircle className='h-8 w-8'/>
+        </button>
+        <span>35 Points</span>
+      </div>
     </div>
   )
 }

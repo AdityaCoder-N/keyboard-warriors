@@ -82,7 +82,7 @@ const Page = () => {
           Keyboard Warriors
         </Link>
 
-        <Card className='w-1/3 p-6'>
+        <Card className='w-1/3 p-6 bg-gradient-to-br from-[#b9d2e1] to-[#6b8595]'>
           <h1 className='text-3xl font-bold mb-2'>Sign In</h1>
           <p className='text-sm mb-4'>
             Ready for some action? Easy there, mate, you&apos;re just gonna type, not fight a dragon to save your girl.
@@ -109,11 +109,13 @@ const Page = () => {
             {errors.password && <p className='text-red-500 text-sm text-left w-full'>{errors.password.message}</p>}
 
             <Button
-              className='w-full mt-6'
+              className='w-full mt-6 text-white'
               type='submit'
               disabled={isSubmitting}
+              bg='#6A7BA2'
+              shadow='#4E5C79'
             >
-              {isSubmitting ? "Signing Up..." : "Let's Go"}
+              {isSubmitting ? "Signing In..." : "Let's Go"}
             </Button>
 
             <div className='w-full text-center my-3'>OR</div>

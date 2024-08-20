@@ -5,6 +5,9 @@ import bgImage from '../assets/Background_space.png';
 import asteroid1 from '../assets/asteroid1.png';
 import asteroid2 from '../assets/Asteroid 01 - Base.png';
 import spaceship from '../assets/spaceship.png'
+import { Button } from "pixel-retroui";
+import Link from "next/link";
+
 export default function Home() {
 
   const spaceshipRef = useRef<HTMLImageElement>(null);
@@ -57,9 +60,40 @@ export default function Home() {
         </div>
 
         <div className="mt-20 flex flex-col gap-8 font-minecraft">
-          <div className="clip w-[400px] p-4 bg-emerald-600 hover:bg-emerald-700 text-center text-xl font-semibold cursor-pointer">Sign Up</div>
-          <div className="clip w-[400px] p-4 bg-emerald-600 hover:bg-emerald-700 text-center text-xl font-semibold cursor-pointer">Log In</div>
-          <div className="clip w-[400px] p-4 bg-amber-600 hover:bg-amber-700 text-center text-xl font-semibold cursor-pointer"><a href="https://aditya-negi-portfolio.vercel.app/" target="_blank"> About Developer</a></div>
+          <Link href='/sign-up'>
+            <Button 
+              bg="#6A7BA2"
+              textColor="white"
+              borderColor="black"
+              shadow="#4E5C79"
+              className="w-[400px] p-1 font-semibold text-xl"
+            >
+              Sign Up
+            </Button>
+          </Link>
+          <Link href='/sign-in'>
+            <Button 
+              bg="#6A7BA2"
+              textColor="white"
+              borderColor="black"
+              shadow="#4E5C79"
+              className="w-[400px] p-1 font-semibold text-xl"
+            >
+              Sign In
+            </Button>
+          </Link>
+          <a href="" target="_blank">
+            <Button 
+              bg="#D87C4A"
+              textColor="white"
+              borderColor="black"
+              shadow="#A6532A"
+              className="w-[400px] p-1 font-semibold text-xl"
+            >
+              About Developer
+            </Button>
+          </a>
+          
         </div>
       </div>
 

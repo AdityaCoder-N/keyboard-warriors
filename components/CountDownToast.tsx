@@ -29,8 +29,8 @@ const CountDownToast = ({
 
   return (
     <div className='fixed top-0 left-0 min-h-screen w-full bg-[rgba(0,0,0,0.7)]'>
-        <div className='z-50 absolute top-6 left-1/2 -translate-x-1/2 rounded-lg p-4 border-white border-2 bg-red-600 w-[400px] h-fit'>
-            <p className='text-2xl text-white font-semibold'>Game will begin in : {timeLeft} seconds</p>
+        <div className='z-50 absolute top-6 left-1/2 -translate-x-1/2 rounded-lg p-4 border-white border-2 bg-[#B22222] w-[420px] h-fit text-center'>
+            <p className='text-xl font-minecraft text-white font-semibold'>{message}: {timeLeft} seconds</p>
         </div>
     </div>
   )

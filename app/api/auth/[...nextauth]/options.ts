@@ -32,7 +32,7 @@ export const authOptions:NextAuthOptions = {
 
           try {
 
-            console.log(credentials);
+            // console.log(credentials);
             const user = await UserModel.findOne({email:credentials.email});
 
             if(!user){
@@ -54,6 +54,25 @@ export const authOptions:NextAuthOptions = {
         }
       })
     ],
+    callbacks:{
+      async jwt({ token, user }) {
+        
+        if(user){
+            token._id = user._id?.toString();
+            token.username = user.username;
+        }
+        return token
+      },
+      async session({ session, user, token }) {
+
+        if(token){
+          session.user._id = token._id?.toString();
+          session.user.username = token.username;
+        }
+        console.log(session.user);
+        return session
+      },
+    },
     pages:{
       signIn:'/sign-in'
     },
