@@ -7,12 +7,14 @@ import asteroid2 from '../assets/Asteroid 01 - Base.png';
 import spaceship from '../assets/spaceship.png'
 import { Button } from "pixel-retroui";
 import Link from "next/link";
-
+ 
 export default function Home() {
 
   const spaceshipRef = useRef<HTMLImageElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
+
     const handleMouseMove = (event:MouseEvent) => {
       document.querySelectorAll(".parallax").forEach((element:any) => {
         const speed = parseInt(element.getAttribute("data-speed"));
@@ -35,6 +37,35 @@ export default function Home() {
       clearInterval(intervalId);
     };
   }, []);
+   
+
+  useEffect(()=>{
+
+    let audioInterval:NodeJS.Timeout ;
+    
+    const handleMouseMove =()=>{
+      if(audioRef.current){
+        audioRef.current.currentTime=0;
+        audioRef.current.play();
+
+        audioInterval = setInterval(()=>{
+          if(audioRef.current){
+            audioRef.current.currentTime=0;
+            audioRef.current.play();
+          }
+        },320000);
+
+        document.removeEventListener('mousemove',handleMouseMove);
+      }
+    }
+
+    document.addEventListener('mousemove',handleMouseMove);
+
+    return ()=>{
+      clearInterval(audioInterval);
+    }
+
+  },[])
 
   const setRandomPosition = () => {
     const spaceshipElement = spaceshipRef.current;
@@ -52,6 +83,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen w-full relative overflow-hidden">
+      <audio src="/assets/home-sound.mp3" className="opacity-0" ref={audioRef}></audio>
       <Image src={bgImage} alt="space" className="h-screen w-full object-cover absolute top-0 left-0 z-0" />
 
       <div className="relative z-50 min-h-screen w-full py-12 flex flex-col items-center">
@@ -110,7 +142,7 @@ export default function Home() {
       <Image src={asteroid1} alt="asteroid" className="absolute bottom-[300px] right-[200px] h-[80px] w-[80px] parallax" data-speed="2" />
       <Image src={asteroid1} alt="asteroid" className="absolute top-[500px] left-[400px] h-[50px] w-[50px] parallax" data-speed="3" />
 
-      <div className="absolute top-8 left-8 h-10 w-10 bg-white rounded-full blur-md opacity-50 parallax" data-speed="5"></div>
+      {/* <div className="absolute top-8 left-8 h-10 w-10 bg-white rounded-full blur-md opacity-50 parallax" data-speed="5"></div>
       <div className="absolute top-8 left-8 h-10 w-10 bg-white rounded-full blur-md opacity-50 parallax" data-speed="3"></div>
       <div className="absolute top-12 left-40 h-8 w-8 bg-white rounded-full blur-md opacity-50 parallax" data-speed="1"></div>
       <div className="absolute top-20 right-20 h-6 w-6 bg-white rounded-full blur-md opacity-50 parallax" data-speed="4"></div>
@@ -125,7 +157,7 @@ export default function Home() {
       <div className="absolute bottom-1/2 left-1/2 h-4 w-4 bg-white rounded-full blur-md opacity-50 parallax" data-speed="3"></div>
       <div className="absolute bottom-1/4 right-1/4 h-10 w-10 bg-white rounded-full blur-md opacity-50 parallax" data-speed="4"></div>
       <div className="absolute top-2/3 right-2/3 h-6 w-6 bg-white rounded-full blur-md opacity-50 parallax" data-speed="6"></div>
-      <div className="absolute top-3/4 left-3/4 h-8 w-8 bg-white rounded-full blur-md opacity-50 parallax" data-speed="3"></div>
+      <div className="absolute top-3/4 left-3/4 h-8 w-8 bg-white rounded-full blur-md opacity-50 parallax" data-speed="3"></div> */}
     </main>
   );
 }

@@ -32,10 +32,15 @@ const PowerUpWndow = ({
 
   const [countdownToast,setCountdownToast] = useState(false);
 
+  const rocketSound = new Audio('/assets/smb_powerup.wav');
   const handleRocket=()=>{
     if (correctCharacters < 10) {
       return;
     }
+
+    rocketSound.currentTime=0;
+    rocketSound.play();
+
     setCorrectCharacters((prev) => prev - 10);
 
     const currentIndex = typedText.length;
@@ -82,8 +87,12 @@ const PowerUpWndow = ({
     inputRef.current?.focus();
   }
 
+  const powerDownSound = new Audio('/assets/smb_browserfalls.wav');
   const handleStop=()=>{
-    console.log("Typing halted");
+
+    powerDownSound.currentTime=0;
+    powerDownSound.play();
+
     setIsTypingStarted(false);
     setCountdownToast(true);
 

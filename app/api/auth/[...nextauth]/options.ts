@@ -69,7 +69,7 @@ export const authOptions:NextAuthOptions = {
           session.user._id = token._id?.toString();
           session.user.username = token.username;
         }
-        console.log(session.user);
+        
         return session
       },
     },

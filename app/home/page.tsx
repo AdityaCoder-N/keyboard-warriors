@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { v4 as uuidv4 } from 'uuid';
 import Link from 'next/link';
@@ -9,10 +9,14 @@ import bgImage from '../../assets/Background_space.png'
 import RoomIdModal from '@/components/RoomIdModal';
 import { ArrowBigRight } from 'lucide-react';
 import { signOut } from 'next-auth/react';
+import { useToast } from '@/components/ui/use-toast';
 
 const Page = () => {
 
+  const audioRef = useRef<HTMLAudioElement>(null);
   const router= useRouter();
+  const {toast} = useToast();
+
 
   const [openModal,setOpenModal] = useState<boolean>(false);
   const [currentIndex,setCurrentIndex] = useState<number>(0);
@@ -30,25 +34,32 @@ const Page = () => {
     router.push(`/play/${uniqueId}`)
   }
 
-  let optionAudio = new Audio('/assets/gameboy-pluck-41265.mp3');
-
+  const playAudio=()=>{
+    if(audioRef.current){
+      audioRef.current.currentTime=0;
+      audioRef.current.play();
+    }
+  }
+ 
   const moveDown = () => {
-    optionAudio.currentTime=0;
-    optionAudio.play();
+    playAudio();
     setCurrentIndex(prev => (prev < menuOptions.length - 1) ? prev + 1 : prev);
   }
 
   const moveUp = () => {
-    optionAudio.currentTime=0;
-    optionAudio.play();
+    playAudio();
     setCurrentIndex(prev => (prev > 0) ? prev - 1 : prev);
   }
 
   const selectOption = () => {
-    menuOptions[currentIndex].action();
+    setCurrentIndex((prev)=>{
+      menuOptions[prev].action();
+      return prev;
+    })
   }
-
+  
   useEffect(() => {
+
     const handleKeyPress = (e: KeyboardEvent) => {
       switch(e.key) {
         case 'ArrowDown':
@@ -74,6 +85,7 @@ const Page = () => {
 
   return (
     <div className='min-h-screen w-full relative overflow-hidden'>
+      <audio src="/assets/gameboy-pluck-41265.mp3" className='opacity-0' ref={audioRef}></audio>
       <Image src={bgImage} alt="space" className="h-screen w-full object-cover absolute top-0 left-0 z-0" />
 
       <div className='relative z-50 min-h-screen w-full py-12 flex flex-col items-center'>

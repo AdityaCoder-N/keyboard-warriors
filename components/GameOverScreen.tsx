@@ -8,13 +8,13 @@ import { useRouter } from 'next/navigation';
 import { socketUser } from '@/types';
 
 interface GameOverScreenProps{
-  users:socketUser[],
-  winner:string,
-  username:string|undefined,
-  roomUrl:string
+  users?:socketUser[],
+  winner:string|undefined|null,
+  username:string|undefined|null,
+  finalScore?:number
 }
 
-const GameOverScreen = ({users,winner,username,roomUrl}:GameOverScreenProps) => {
+const GameOverScreen = ({users,winner,username,finalScore}:GameOverScreenProps) => {
 
   const router = useRouter();
   const [currentIndex,setCurrentIndex] = useState<number>(0);
@@ -93,7 +93,11 @@ const GameOverScreen = ({users,winner,username,roomUrl}:GameOverScreenProps) => 
                 <h3 className='text-yellow-400 font-semibold text-3xl'>{winner}</h3>
             </div>
 
-            <div className='mt-20 flex gap-6 justify-center items-center text-white'>
+            {finalScore && <div className='mt-12 text-xl text-white text-center'>
+              Score : {finalScore} wpm
+            </div>}
+
+            {users && <div className='mt-20 flex gap-6 justify-center items-center text-white'>
             {
               users.map((user:socketUser)=>{
                 if(user.username!==winner){
@@ -103,7 +107,7 @@ const GameOverScreen = ({users,winner,username,roomUrl}:GameOverScreenProps) => 
                 }
               })
             }
-            </div>
+            </div>}
 
             <div className='flex flex-col items-center gap-6 text-white mt-12 font-semibold transition-all'>
             {menuOptions.map((option, index) => (
