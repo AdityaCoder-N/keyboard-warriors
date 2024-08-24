@@ -28,8 +28,8 @@ const RoomSidebar = ({
   }
 
   return (
-    <Card className='w-1/5 p-3 bg-gradient-to-br from-[#b9d2e1] to-[#8eabbd]'>
-        <div className='flex gap-4 items-center'>
+    <Card className='w-full md:w-1/5 p-3 bg-gradient-to-br from-[#b9d2e1] to-[#8eabbd] text-sm md:text-base'>
+        <div className='flex gap-2 md:gap-4 items-center '>
             <label htmlFor="ready">Are you Ready? :</label>
             <input
                 type="checkbox"
@@ -38,7 +38,7 @@ const RoomSidebar = ({
                 disabled={startGame}
             />
         </div>
-        <div className='my-4 font-semibold'>Players in the room:</div>
+        <div className='mt-8 md:mt-4 my-2 md:my-4 font-semibold'>Players in the room:</div>
         <div className='max-h-[45vh] overflow-y-auto'>
             {users.map((user,index)=>{
             return(

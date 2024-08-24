@@ -38,7 +38,10 @@ const GameOverScreen = ({users,winner,username,finalScore}:GameOverScreenProps) 
   }
 
   const selectOption = () => {
-    menuOptions[currentIndex].action();
+    setCurrentIndex(prev=>{
+      menuOptions[prev].action();
+      return prev;
+    })
   }
 
   useEffect(() => {
@@ -80,17 +83,17 @@ const GameOverScreen = ({users,winner,username,finalScore}:GameOverScreenProps) 
     <div className='fixed z-50 top-0 left-0 min-h-screen w-full bg-[rgba(0,0,0,0.95)]'>
         <div className='z-50 min-h-screen w-full font-minecraft'>
             <div className='mt-20 text-center'>
-              <h2 className='text-[rgb(171,52,86)] text-[60px] leading-[45px] font-bold'>Game Over</h2>
+              <h2 className='text-[rgb(171,52,86)] text-[40px] sm:text-[50px] md:text-[60px] leading-[45px] font-bold'>Game Over</h2>
               {
                 winner===username?
-                <h1 className='text-[120px] text-[rgb(35,105,33)] font-bold'>You Won</h1>:
-                <h1 className='text-[120px] text-[rgb(235,40,26)] font-bold'>You Lost</h1>
+                <h1 className='text-[70px] sm:text-[100px] md:text-[120px] text-[rgb(35,105,33)] font-bold'>You Won</h1>:
+                <h1 className='text-[70px] sm:text-[100px] md:text-[120px] text-[rgb(35,105,33)] font-bold'>You Lost</h1>
               }  
             </div>
 
             <div className='mt-12 relative text-center'>
                 <Image src={crown} alt='crown' className='h-12 w-12 absolute left-1/2 -translate-x-1/2 -top-12 crown' />
-                <h3 className='text-yellow-400 font-semibold text-3xl'>{winner}</h3>
+                <h3 className='text-yellow-400 font-semibold text-xl md:text-3xl'>{winner}</h3>
             </div>
 
             {finalScore && <div className='mt-12 text-xl text-white text-center'>

@@ -8,7 +8,7 @@ interface ParagraphDisplayProps{
 
 const ParagraphDisplay = ({ paragraph, typedText, isCorrect } : ParagraphDisplayProps) => {
   return (
-    <p className="text-slate-600 p-4 text-2xl font-bold bg-white rounded-xl text-justify">
+    <p className="text-slate-600 p-4 md:text-2xl font-bold bg-white rounded-xl text-justify">
       {paragraph.split('').map((char, index) => {
         let color = 'text-slate-600';
         if (index < typedText.length) {

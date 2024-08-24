@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useSocket } from '@/context/SocketProvider'
 import { socketUser } from '@/types'
@@ -41,11 +41,14 @@ const Page = ({params}:RoomParamsInterface) => {
   const [gameOver,setGameOver] = useState(false)
   const [winner,setWinner] = useState('');
   
+  const hasJoinedRoom = useRef(false);
+
   useEffect(()=>{
     
-    if(socket && session){
-
+    if(socket && session && !hasJoinedRoom.current){
+      
         socket?.emit('joinRoom',{roomId,username})
+        hasJoinedRoom.current = true;
 
         socket.on('gameInProgress', (inProgress: boolean) => {
           if (inProgress) {
@@ -76,12 +79,13 @@ const Page = ({params}:RoomParamsInterface) => {
         })
     }
 
-  },[socket, roomId, session, username])
+  },[socket, roomId, session, username, toast, router])
 
   const beginGame=()=>{
     setStartGame(true); 
     setCountdownModal(false);
   }
+  
 
   if (status === "unauthenticated") {
     return <p>Please Sign In to use this route.</p>
@@ -91,17 +95,17 @@ const Page = ({params}:RoomParamsInterface) => {
 
       {gameOver && <GameOverScreen winner={winner} users={users} username={username} />}
 
-      <Image src={bgImage} alt="space" className="h-screen w-full object-cover absolute top-0 left-0 z-0" />
+      <Image src={bgImage} alt="space" className="min-h-screen h-full w-full object-cover absolute top-0 left-0 z-0" />
       
-      <div className='relative z-5 min-h-screen w-full py-4 flex flex-col items-center'>
+      <div className='relative z-5 min-h-screen w-full py-3 flex flex-col items-center'>
 
         <RoomHeader roomId={roomId}/>
 
-        <div className='flex gap-8 md:w-[90%] mt-4'>
+        <div className='flex flex-col md:flex-row gap-0 md:gap-8 w-full md:w-[90%] mt-4 pl-0 pr-4'>
           
           <RoomSidebar users={users} startGame={startGame} roomId={roomId}/>
 
-          <div className='w-4/5 h-full'>
+          <div className='w-full md:w-4/5 h-full'>
             <TypingComponent isTypingStarted={startGame} setIsTypingStarted={setStartGame} roomId={roomId} username={session?.user?.username}/>
           </div>
         </div>

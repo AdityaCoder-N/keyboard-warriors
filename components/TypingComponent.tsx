@@ -34,10 +34,16 @@ const TypingComponent = ({isTypingStarted,setIsTypingStarted,roomId,username=""}
   const socket = useSocket();
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
+  useEffect(()=>{
+    if(inputRef.current && isTypingStarted){
+      inputRef.current.focus();
+    }
+  },[isTypingStarted])
+
   return (
     <Card className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#b9d2e1] to-[#6b8595]">
 
-      <div className="w-[80%] mt-8">
+      <div className="w-[95%] md:w-[80%] mt-4 sm:mt-8">
         <ParagraphDisplay paragraph={currentParagraph} typedText={typedText} isCorrect={isCorrect}/>
 
         <textarea

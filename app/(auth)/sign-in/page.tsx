@@ -82,7 +82,7 @@ const Page = () => {
           Keyboard Warriors
         </Link>
 
-        <Card className='w-1/3 p-6 bg-gradient-to-br from-[#b9d2e1] to-[#6b8595]'>
+        <Card className='w-[90%] sm:w-[70%] md:w-[500px] lg:w-[500px] p-6 bg-gradient-to-br from-[#b9d2e1] to-[#6b8595] mt-12'>
           <h1 className='text-3xl font-bold mb-2'>Sign In</h1>
           <p className='text-sm mb-4'>
             Ready for some action? Easy there, mate, you&apos;re just gonna type, not fight a dragon to save your girl.

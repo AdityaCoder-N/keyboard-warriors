@@ -2,29 +2,26 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { v4 as uuidv4 } from 'uuid';
-import Link from 'next/link';
 import Image from 'next/image';
 import bgImage from '../../assets/Background_space.png'
 
 import RoomIdModal from '@/components/RoomIdModal';
 import { ArrowBigRight } from 'lucide-react';
 import { signOut } from 'next-auth/react';
-import { useToast } from '@/components/ui/use-toast';
+
 
 const Page = () => {
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const router= useRouter();
-  const {toast} = useToast();
-
 
   const [openModal,setOpenModal] = useState<boolean>(false);
   const [currentIndex,setCurrentIndex] = useState<number>(0);
 
   const menuOptions = [
-    { label: "Invite Others to Play", action: () => createRoom() },
-    { label: "Practice Yourself", action: () => router.push('/play/practice') },
-    { label: "Join Private Room", action: () => setOpenModal(!openModal) },
+    { label: "Single Player", action: () => router.push('/practice') },
+    { label: "Mulitplayer", action: () => createRoom() },
+    { label: "Join a Private Room", action: () => setOpenModal(!openModal) },
     { label: "Join a Public Room (Coming Soon)", action: () => alert("Feature coming soon!") },
     { label: "Log Out", action: () => signOut({ callbackUrl: '/' }) }
   ];
@@ -84,16 +81,16 @@ const Page = () => {
   }, []);
 
   return (
-    <div className='min-h-screen w-full relative overflow-hidden'>
+    <div className='min-h-screen w-full flex flex-col items-center relative overflow-hidden'>
       <audio src="/assets/gameboy-pluck-41265.mp3" className='opacity-0' ref={audioRef}></audio>
       <Image src={bgImage} alt="space" className="h-screen w-full object-cover absolute top-0 left-0 z-0" />
 
       <div className='relative z-50 min-h-screen w-full py-12 flex flex-col items-center'>
-        <div className="font-poxast md:text-[80px] md:leading-[120px] font-bold text-white text-center w-2/3">
+        <div className="font-poxast text-[38px] leading-[60px] sm:text-[60px] sm:leading-[80px] md:text-[80px] md:leading-[120px] font-bold text-white text-center w-fit lg:w-2/3">
           Keyboard Warriors
         </div>
 
-        <div className='flex flex-col items-center gap-8 text-white text-2xl mt-12 font-minecraft font-semibold transition-all'>
+        <div className='flex flex-col items-center gap-8 text-white sm:text-xl md:text-2xl mt-12 font-minecraft font-semibold transition-all'>
           {menuOptions.map((option, index) => (
             <button 
               key={index} 

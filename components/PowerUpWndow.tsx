@@ -55,7 +55,7 @@ const PowerUpWndow = ({
   }
 
   
-  const bombSound = new Audio('/assets/Chunky Explosion.mp3');
+  const bombSound = new Audio('/assets/ChunkyExplosion.mp3');
   const handleBomb = ()=>{
     
     bombSound.currentTime=0;
@@ -87,7 +87,7 @@ const PowerUpWndow = ({
     inputRef.current?.focus();
   }
 
-  const powerDownSound = new Audio('/assets/smb_browserfalls.wav');
+  const powerDownSound = new Audio('/assets/smb_bowserfalls.wav');
   const handleStop=()=>{
 
     powerDownSound.currentTime=0;
@@ -145,14 +145,14 @@ const PowerUpWndow = ({
   },[])
 
   return (
-    <div className='flex w-full p-4 items-center justify-center gap-8 text-black'>
+    <div className='flex w-full p-4 items-center justify-center gap-8 text-black text-xs sm:text-base'>
       {countdownToast && <CountDownToast time={5} message='Player Stopped typing for' onCountdownEnd={()=>setCountdownToast(false)}/>}
       <div className='flex flex-col gap-2 items-center'>
         <button
           disabled={correctCharacters<10}
           onClick={handleRocket}
           className={`transition-all border-black border-4  p-3 cursor-pointer hover:translate-y-[-5px] ${correctCharacters>=20?'box bg-amber-300 border-amber-500 border-solid':'border-dashed'}`}>
-          <Rocket className='h-8 w-8'/>
+          <Rocket className='h-6 w-6 md:h-8 md:w-8'/>
         </button>
         <span>20 Points</span>
       </div>
@@ -162,7 +162,7 @@ const PowerUpWndow = ({
           onClick={emitBomb}
           disabled={correctCharacters<15}
           className={`border-black border-4 p-3 cursor-pointer hover:translate-y-[-5px] transition-all ${correctCharacters>=30?'box bg-amber-300 border-amber-500 border-solid':'border-dashed'}`}>
-          <Bomb className='h-8 w-8'/>
+          <Bomb className='h-6 w-6 md:h-8 md:w-8'/>
         </button>
         <span>30 Points</span>
       </div>
@@ -172,7 +172,7 @@ const PowerUpWndow = ({
           onClick={emitStop}
           disabled={correctCharacters<20}
           className={`border-black border-4 p-3 cursor-pointer hover:translate-y-[-5px] transition-all ${correctCharacters>=35?'box bg-amber-300 border-amber-500 border-solid':'border-dashed'}`}>
-          <StopCircle className='h-8 w-8'/>
+          <StopCircle className='h-6 w-6 md:h-8 md:w-8'/>
         </button>
         <span>35 Points</span>
       </div>

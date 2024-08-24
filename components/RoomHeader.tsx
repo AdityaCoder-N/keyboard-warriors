@@ -49,21 +49,25 @@ const RoomHeader = ({roomId}:{
     
 
   return (
-    <Card className='flex flex-col gap-2 p-2'>
-        <div className='w-full text-black flex items-center justify-between gap-4'>
+    <Card className='w-[90%] md:w-fit flex flex-col gap-2 p-2 md:text-base text-xs text-black'>
+      <div className='w-full  flex flex-col md:flex-row items-center justify-between gap-1 md:gap-4'>
         <span className='font-semibold'>Room URL: </span>
-        <span>
-            {roomUrl}
-        </span>
-        <Copy className='h-4 w-4 cursor-pointer' onClick={()=>copyToClipboard('roomUrl')}/>
+        <div className='flex items-center justify-between gap-2'>
+          <span className='flex-1'>
+              {roomUrl}
+          </span>
+          <Copy className='h-4 w-4 cursor-pointer' onClick={()=>copyToClipboard('roomUrl')}/>
         </div>
-        <div className='w-full text-black flex items-center justify-between gap-4'>
+      </div>
+      <div className='w-full flex flex-col md:flex-row items-center justify-between gap-1 md:gap-4'>
         <span className='font-semibold'>Room ID: </span>
-        <span>
-            {roomId}
-        </span>
-        <Copy className='h-4 w-4 cursor-pointer' onClick={()=>copyToClipboard('roomId')}/>
+        <div className='flex items-center justify-between gap-2 flex-1'>
+          <span className='text-center w-full'>
+              {roomId}
+          </span>
+          <Copy className='h-4 w-4 cursor-pointer' onClick={()=>copyToClipboard('roomId')}/>
         </div>
+      </div>
     </Card>
 
   )

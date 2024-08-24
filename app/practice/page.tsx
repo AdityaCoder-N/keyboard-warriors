@@ -1,5 +1,5 @@
 'use client'
-import React, { useState,useRef } from 'react';
+import React, { useState,useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 
@@ -56,20 +56,26 @@ const Page = () => {
   }
 
   const onModalClose=()=>{
-    setIsTypingStarted(true); 
     setCountdownModal(false);
-    inputRef.current?.focus();
+    setIsTypingStarted(true); 
   }
+
+  useEffect(()=>{
+    if(inputRef.current && isTypingStarted){
+      inputRef.current?.focus();
+    }
+  },[isTypingStarted]);
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center relative">
 
       {gameOver && <GameOverScreen finalScore={finalScore} username={username} winner={username}/>}
 
-      <Image src={bgImage} alt="space" className="h-screen w-full object-cover absolute top-0 left-0 z-0" />
+      <Image src={bgImage} alt="space" className="min-h-screen h-full w-full object-cover absolute top-0 left-0 z-0" />
 
-      <div className="relative z-5 min-h-screen w-[60%] py-4 flex flex-col items-center">
-        <Card className='w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#b9d2e1] to-[#6b8595] p-6'>
+      <div className="relative z-5 min-h-screen w-[90%] sm:w-[80%] md:w-[60%] py-4 flex flex-col items-center">
+
+        <Card className='w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#b9d2e1] to-[#6b8595] p-6 md:mt-16 lg:mt-20'>
 
           <ParagraphDisplay paragraph={currentParagraph} typedText={typedText} isCorrect={isCorrect}/>
 
@@ -88,7 +94,7 @@ const Page = () => {
                 onClick={()=>setCountdownModal(true)} 
                 bg='#6A7BA2'
                 shadow='#4E5C79'
-                className='text-white mt-3'
+                className='text-white mt-3 text-sm md:text-base'
                 disabled={isTypingStarted}
               >Click to Start</Button>
             }
