@@ -28,17 +28,26 @@ const TypingComponent = ({isTypingStarted,setIsTypingStarted,roomId,username=""}
     isCorrect, 
     correctCharacters,
     setCorrectCharacters,
-    setTypedText 
+    setTypedText,
+    setCurrentParagraph
   } = useTyping(onComplete);
 
   const socket = useSocket();
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(()=>{
+
+    socket?.on('paragraph',(paragraph:string)=>{
+      setCurrentParagraph(paragraph);
+    })
+
+  },[socket])
+
+  useEffect(()=>{
     if(inputRef.current && isTypingStarted){
       inputRef.current.focus();
     }
-  },[isTypingStarted])
+  },[isTypingStarted]);
 
   return (
     <Card className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#b9d2e1] to-[#6b8595]">

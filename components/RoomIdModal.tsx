@@ -9,6 +9,8 @@ const RoomIdModal = ({setOpenModal}:{
     setOpenModal:React.Dispatch<React.SetStateAction<boolean>>
 }) => {
 
+  const host = process.env.SOCKET_HOST || "http://localhost:8000"
+
   const router = useRouter();
   const {toast} = useToast();
 
@@ -22,7 +24,7 @@ const RoomIdModal = ({setOpenModal}:{
   const handleJoinRoom=async()=>{
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:8000/api/verify-room/${roomId}`);
+      const response = await fetch(`${host}/api/verify-room/${roomId}`);
       const data = await response.json();
       
       if (data.exists && !data.gameInProgress) {
@@ -36,7 +38,6 @@ const RoomIdModal = ({setOpenModal}:{
         })
       }
       else if(!data.exists){
-        console.log("nahi mila")
         toast({
           variant:"destructive",
           title:"Room Not Found",

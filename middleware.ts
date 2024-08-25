@@ -9,7 +9,6 @@ export async function middleware(request: NextRequest) {
   const url = request.nextUrl;
 
   if (token) {
-    console.log("token found");
 
     // Authenticated users should not access sign-in or sign-up
     if (url.pathname.startsWith('/sign-in') || url.pathname.startsWith('/sign-up')) {
@@ -18,8 +17,7 @@ export async function middleware(request: NextRequest) {
 
 
   } else {
-    console.log("token not found");
-
+    
     // Unauthenticated users should not access home, play, and practice
     if (url.pathname.startsWith('/home') || url.pathname.startsWith('/play') || url.pathname.startsWith('/practice')) {
       return NextResponse.redirect(new URL('/sign-in', request.url));

@@ -13,8 +13,10 @@ const SocketProvider = ({
     children
 }:{children:React.ReactNode}) => {
     
+    const host = process.env.SOCKET_HOST ||  "http://localhost:8000";
+
     const socket = useMemo(() => {
-        const socketInstance = io('http://localhost:8000');
+        const socketInstance = io(host);
 
         socketInstance.on('connect', () => {
             console.log('Connected to Socket.IO server');

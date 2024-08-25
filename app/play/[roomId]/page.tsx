@@ -62,18 +62,15 @@ const Page = ({params}:RoomParamsInterface) => {
         });
 
         socket?.on('roomUsers',(roomUsers:socketUser[])=>{
-            console.log(roomUsers)
             setUsers(roomUsers)
         });
 
         socket?.on('startGame',()=>{
             // setStartGame(true);
             setCountdownModal(true);
-            console.log("Game to be started");
         })
 
         socket?.on('gameWon',({winner})=>{
-          console.log("Game won by",winner);
           setWinner(winner);
           setGameOver(true);
         })

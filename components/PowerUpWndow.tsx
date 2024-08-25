@@ -32,14 +32,19 @@ const PowerUpWndow = ({
 
   const [countdownToast,setCountdownToast] = useState(false);
 
-  const rocketSound = new Audio('/assets/smb_powerup.wav');
+  const rocketAudio = useRef<HTMLAudioElement>(null);
+  const bombAudio = useRef<HTMLAudioElement>(null);
+  const powerDownAudio = useRef<HTMLAudioElement>(null);
+
   const handleRocket=()=>{
     if (correctCharacters < 10) {
       return;
     }
 
-    rocketSound.currentTime=0;
-    rocketSound.play();
+    if(rocketAudio.current){
+      rocketAudio.current.currentTime=0;
+      rocketAudio.current.play();
+    }
 
     setCorrectCharacters((prev) => prev - 10);
 
@@ -54,12 +59,12 @@ const PowerUpWndow = ({
     inputRef.current?.focus();
   }
 
-  
-  const bombSound = new Audio('/assets/ChunkyExplosion.mp3');
   const handleBomb = ()=>{
     
-    bombSound.currentTime=0;
-    bombSound.play();
+    if(bombAudio.current){
+      bombAudio.current.currentTime=0;
+      bombAudio.current.play();
+    }
 
     toast({
       title:'Bomb Received',
@@ -87,12 +92,12 @@ const PowerUpWndow = ({
     inputRef.current?.focus();
   }
 
-  const powerDownSound = new Audio('/assets/smb_bowserfalls.wav');
   const handleStop=()=>{
 
-    powerDownSound.currentTime=0;
-    powerDownSound.play();
-
+    if(powerDownAudio.current){
+      powerDownAudio.current.currentTime=0;
+      powerDownAudio.current.play();
+    }
     setIsTypingStarted(false);
     setCountdownToast(true);
 
@@ -176,6 +181,10 @@ const PowerUpWndow = ({
         </button>
         <span>35 Points</span>
       </div>
+
+      <audio ref={rocketAudio} src="/assets/smb_powerup.wav" className='opacity-0'></audio>
+      <audio ref={bombAudio} src="/assets/ChunkyExplosion.mp3" className='opacity-0'></audio>
+      <audio ref={powerDownAudio} src="/assets/smb_bowserfalls.wav" className='opacity-0'></audio>
     </div>
   )
 }

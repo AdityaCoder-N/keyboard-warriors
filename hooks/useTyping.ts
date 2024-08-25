@@ -17,8 +17,9 @@ export default function useTyping( onComplete:()=>void ){
   const handleKeyPress = (e:React.KeyboardEvent<HTMLTextAreaElement>) => {
     
     const { key } = e;
-    console.log(key);
-    if (key==='CapsLock') return;
+    const regex = /^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~ ]$/;
+
+    if (!regex.test(key)) return;
     
     const nextTypedTextLength = typedText.length + 1;
 
@@ -38,6 +39,6 @@ export default function useTyping( onComplete:()=>void ){
     }
   };
 
-  return{currentParagraph, handleKeyPress, typedText, isCorrect, correctCharacters, setCorrectCharacters, setTypedText}
+  return{currentParagraph, handleKeyPress, typedText, isCorrect, correctCharacters, setCorrectCharacters, setTypedText, setCurrentParagraph}
 
 }
