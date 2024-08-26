@@ -56,7 +56,7 @@ export const authOptions:NextAuthOptions = {
     ],
     callbacks:{
       async jwt({ token, user }) {
-        
+        console.log("user found",user);
         if(user){
             token._id = user._id?.toString();
             token.username = user.username;

@@ -56,11 +56,11 @@ const Page = () => {
           description:"Incorrect Username or Password",
           variant:"destructive"
         })
+        return;
       }
   
-      if(result?.url){
-        router.replace('/home');
-      }
+      router.replace('/home');
+      
 
     } catch (error) {
       console.log('Error Loggin in User',error);
