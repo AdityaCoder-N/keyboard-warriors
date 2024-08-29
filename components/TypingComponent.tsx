@@ -32,7 +32,7 @@ const TypingComponent = ({isTypingStarted,setIsTypingStarted,roomId,username=""}
     setCurrentParagraph
   } = useTyping(onComplete);
 
-  const socket = useSocket();
+  const {socket} = useSocket();
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(()=>{
@@ -58,7 +58,7 @@ const TypingComponent = ({isTypingStarted,setIsTypingStarted,roomId,username=""}
         <textarea
           ref={inputRef}
           className="mt-4 p-2 w-full border-2 border-gray-300 rounded-lg"
-          onKeyDown={handleKeyPress}
+          onChange={handleKeyPress}
           autoFocus
           disabled={!isTypingStarted}
         />
@@ -74,7 +74,18 @@ const TypingComponent = ({isTypingStarted,setIsTypingStarted,roomId,username=""}
           </span>
         </div>
 
-        <PowerUpWindow correctCharacters={correctCharacters} paragraph={currentParagraph} typedText={typedText} setCorrectCharacters={setCorrectCharacters} setTypedText={setTypedText} inputRef={inputRef} setIsTypingStarted={setIsTypingStarted} roomId={roomId}/>
+        <PowerUpWindow 
+          username={username}
+          correctCharacters={correctCharacters} 
+          paragraph={currentParagraph} 
+          typedText={typedText} 
+          setCorrectCharacters={setCorrectCharacters} 
+          setTypedText={setTypedText} 
+          inputRef={inputRef} 
+          setIsTypingStarted={setIsTypingStarted} 
+          roomId={roomId}
+          onComplete={onComplete}
+        />
 
       </div>
     </Card>

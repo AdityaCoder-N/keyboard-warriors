@@ -14,28 +14,31 @@ export default function useTyping( onComplete:()=>void ){
   const [correctCharacters,setCorrectCharacters] = useState<number>(0);
 
 
-  const handleKeyPress = (e:React.KeyboardEvent<HTMLTextAreaElement>) => {
-    
-    const { key } = e;
-    const regex = /^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~ ]$/;
+  const handleKeyPress = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const { value } = e.target;
+    setTypedText(value);
+  
+    // Determining the length of the input
+    const nextTypedTextLength = value.length;
+  
+    // Checking if the input so far matches the corresponding portion of the paragraph
+    if (value === currentParagraph.slice(0, nextTypedTextLength)) {
 
-    if (!regex.test(key)) return;
-    
-    const nextTypedTextLength = typedText.length + 1;
-
-    if (key === currentParagraph[typedText.length]) {
-      setTypedText((prev) => prev + key);
       setIsCorrect(true);
-      setCorrectCharacters((prev)=>prev+1);
+        // Only incrementing correctCharacters when the user types forward
+      if (nextTypedTextLength > typedText.length) {
+        setCorrectCharacters((prev) => prev + 1);
+      } else if (nextTypedTextLength < typedText.length) {
+        // Decrementing correctCharacters when the user presses backspace
+        setCorrectCharacters((prev) => prev - 1);
+      }
 
-        // Check if the next length matches the paragraph length
-      if (nextTypedTextLength === currentParagraph.length) {
+      if (nextTypedTextLength === currentParagraph.length && value === currentParagraph) {
         onComplete();
       }
     } else {
-      setIsCorrect(false)
-      // play sound
-      e.preventDefault();
+      setIsCorrect(false);
+      // Handle incorrect typing (e.g., play sound)
     }
   };
 

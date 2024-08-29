@@ -15,6 +15,7 @@ import TypingComponent from '@/components/TypingComponent'
 import GameOverScreen from '@/components/GameOverScreen'
 import RoomHeader from '@/components/RoomHeader'
 import RoomSidebar from '@/components/RoomSidebar'
+import SocketLoaderModal from '@/components/SocketLoaderModal'
 
 interface RoomParamsInterface{
     params:{
@@ -26,7 +27,7 @@ const Page = ({params}:RoomParamsInterface) => {
 
   const router = useRouter();
   let { data: session, status } = useSession();
-  const socket = useSocket();  
+  const {socket,isConnected} = useSocket();  
   const {toast} = useToast();
   
   const roomId = params.roomId;
@@ -40,13 +41,14 @@ const Page = ({params}:RoomParamsInterface) => {
   const [countdownModal,setCountdownModal] = useState(false)
   const [gameOver,setGameOver] = useState(false)
   const [winner,setWinner] = useState('');
-  
+
+
   const hasJoinedRoom = useRef(false);
 
   useEffect(()=>{
     
-    if(socket && session && !hasJoinedRoom.current){
-      
+    if(socket && session && !hasJoinedRoom.current && isConnected){
+        console.log(isConnected);
         socket?.emit('joinRoom',{roomId,username})
         hasJoinedRoom.current = true;
 
@@ -61,22 +63,22 @@ const Page = ({params}:RoomParamsInterface) => {
           }
         });
 
-        socket?.on('roomUsers',(roomUsers:socketUser[])=>{
-            setUsers(roomUsers)
-        });
-
         socket?.on('startGame',()=>{
             // setStartGame(true);
             setCountdownModal(true);
         })
 
-        socket?.on('gameWon',({winner})=>{
+        socket?.on('roomUsers',(roomUsers:socketUser[])=>{
+          setUsers(roomUsers)
+        });
+
+        socket?.on('gameWon',({users,winner})=>{
           setWinner(winner);
           setGameOver(true);
         })
     }
 
-  },[socket, roomId, session, username, toast, router])
+  },[socket, roomId, session, isConnected, username, toast, router])
 
   const beginGame=()=>{
     setStartGame(true); 
@@ -90,17 +92,18 @@ const Page = ({params}:RoomParamsInterface) => {
   return (
     <div className='min-h-screen w-full relative'>
 
+      {!isConnected && <SocketLoaderModal/>}
       {gameOver && <GameOverScreen winner={winner} users={users} username={username} />}
-
+  
       <Image src={bgImage} alt="space" className="min-h-screen h-full w-full object-cover absolute top-0 left-0 z-0" />
       
       <div className='relative z-5 min-h-screen w-full py-3 flex flex-col items-center'>
-
+        
         <RoomHeader roomId={roomId}/>
 
         <div className='flex flex-col md:flex-row gap-0 md:gap-8 w-full md:w-[90%] mt-4 pl-0 pr-4'>
           
-          <RoomSidebar users={users} startGame={startGame} roomId={roomId}/>
+          <RoomSidebar startGame={startGame} roomId={roomId}/>
 
           <div className='w-full md:w-4/5 h-full'>
             <TypingComponent isTypingStarted={startGame} setIsTypingStarted={setStartGame} roomId={roomId} username={session?.user?.username}/>

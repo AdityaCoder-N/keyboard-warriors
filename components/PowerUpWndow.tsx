@@ -5,6 +5,7 @@ import { useToast } from './ui/use-toast';
 import CountDownToast from './CountDownToast';
 
 interface PowerUpWindowProps{
+  username?:string | null;
   correctCharacters:number;
   paragraph:string;
   typedText:string;
@@ -12,10 +13,12 @@ interface PowerUpWindowProps{
   setTypedText:React.Dispatch<React.SetStateAction<string>>;
   inputRef:React.RefObject<HTMLTextAreaElement>;
   setIsTypingStarted:React.Dispatch<React.SetStateAction<boolean>>;
-  roomId?:string
+  roomId?:string;
+  onComplete:()=>void
 }
 
 const PowerUpWndow = ({
+  username,
   correctCharacters,
   setCorrectCharacters,
   paragraph,
@@ -23,11 +26,12 @@ const PowerUpWndow = ({
   setTypedText,
   inputRef,
   setIsTypingStarted,
-  roomId
+  roomId,
+  onComplete
   }:PowerUpWindowProps) => {
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const socket = useSocket();
+  const {socket} = useSocket();
   const {toast} = useToast();
 
   const [countdownToast,setCountdownToast] = useState(false);
@@ -37,7 +41,7 @@ const PowerUpWndow = ({
   const powerDownAudio = useRef<HTMLAudioElement>(null);
 
   const handleRocket=()=>{
-    if (correctCharacters < 10) {
+    if (correctCharacters < 20) {
       return;
     }
 
@@ -46,12 +50,23 @@ const PowerUpWndow = ({
       rocketAudio.current.play();
     }
 
-    setCorrectCharacters((prev) => prev - 10);
+    setCorrectCharacters((prev) => prev - 20);
 
     const currentIndex = typedText.length;
-    const endIndex = Math.min(currentIndex + 10, paragraph.length);
+    const endIndex = Math.min(currentIndex + 20, paragraph.length);
     const stringToAdd = paragraph.substring(currentIndex, endIndex);
-    setTypedText((prev) => prev + stringToAdd);
+
+    setTypedText((prev) => {
+      const updatedTypedText = prev + stringToAdd;
+
+      console.log(updatedTypedText)
+      // Checking if the updated typed text matches the entire paragraph
+      if (updatedTypedText === paragraph) {
+        onComplete();
+      }
+
+      return updatedTypedText;
+    });
 
     if (inputRef.current) {
       inputRef.current.value = inputRef.current.value+stringToAdd;
@@ -59,7 +74,7 @@ const PowerUpWndow = ({
     inputRef.current?.focus();
   }
 
-  const handleBomb = ()=>{
+  const handleBomb = (username:string)=>{
     
     if(bombAudio.current){
       bombAudio.current.currentTime=0;
@@ -67,7 +82,7 @@ const PowerUpWndow = ({
     }
 
     toast({
-      title:'Bomb Received',
+      title:`${username} Bombed You!`,
       description:'You will go 10 characters back.',
       variant:"destructive"
     })
@@ -92,7 +107,13 @@ const PowerUpWndow = ({
     inputRef.current?.focus();
   }
 
-  const handleStop=()=>{
+  const handleStop=(username:string)=>{
+
+    toast({
+      title:`${username} Froze You!`,
+      description:'You will wait for 5 seconds.',
+      variant:"destructive"
+    })
 
     if(powerDownAudio.current){
       powerDownAudio.current.currentTime=0;
@@ -109,34 +130,34 @@ const PowerUpWndow = ({
   }
 
   const emitBomb=()=>{
-    console.log("room id",roomId)
-    if (correctCharacters < 15) {
+
+    if (correctCharacters < 30) {
       return;
     }
-    setCorrectCharacters((prev) => prev - 15);
+    setCorrectCharacters((prev) => prev - 30);
     if(socket){
-      socket.emit('bombPlayers',{roomId})
+      socket.emit('bombPlayers',{roomId,username})
     }
   }
   const emitStop=()=>{
     console.log("Stop emitted")
-    if (correctCharacters < 10) {
+    if (correctCharacters < 35) {
       return;
     }
-    setCorrectCharacters((prev) => prev - 10);
+    setCorrectCharacters((prev) => prev - 35);
     if(socket){
-      socket.emit('stopPlayers',{roomId})
+      socket.emit('stopPlayers',{roomId,username})
     }
   }
 
   useEffect(()=>{
 
     if(socket){
-      socket.on('bombPlayers',()=>{
-        handleBomb();
+      socket.on('bombPlayers',({username})=>{
+        handleBomb(username);
       })
-      socket.on('stopPlayers',()=>{
-        handleStop();
+      socket.on('stopPlayers',({username})=>{
+        handleStop(username);
       })
     }
 

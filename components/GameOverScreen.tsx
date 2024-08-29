@@ -6,6 +6,7 @@ import crown from '../assets/crown.png'
 import { ArrowBigRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { socketUser } from '@/types';
+import { useSocket } from '@/context/SocketProvider';
 
 interface GameOverScreenProps{
   users?:socketUser[],
@@ -87,7 +88,7 @@ const GameOverScreen = ({users,winner,username,finalScore}:GameOverScreenProps) 
               {
                 winner===username?
                 <h1 className='text-[70px] sm:text-[100px] md:text-[120px] text-[rgb(35,105,33)] font-bold'>You Won</h1>:
-                <h1 className='text-[70px] sm:text-[100px] md:text-[120px] text-[rgb(35,105,33)] font-bold'>You Lost</h1>
+                <h1 className='text-[70px] sm:text-[100px] md:text-[120px]  text-[rgb(255,29,29)] font-bold'>You Lost</h1>
               }  
             </div>
 

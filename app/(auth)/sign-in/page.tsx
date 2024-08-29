@@ -59,7 +59,7 @@ const Page = () => {
         return;
       }
   
-      router.replace('/home');
+      router.push('/home');
       
 
     } catch (error) {

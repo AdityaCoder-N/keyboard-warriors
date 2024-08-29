@@ -82,7 +82,7 @@ const Page = () => {
           <textarea
             ref={inputRef}
             className="mt-4 p-2 w-full border-2 border-gray-300 rounded-lg"
-            onKeyDown={handleKeyPress}
+            onChange={handleKeyPress}
             autoFocus
             disabled={!isTypingStarted}
           />
