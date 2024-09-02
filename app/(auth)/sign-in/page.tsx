@@ -44,12 +44,12 @@ const Page = () => {
     const {email,password} = data;
     try {
       const result = await signIn('credentials',{
-        redirect:false,
+        redirect:true,
         email:email,
-        password:password
+        password:password,
+        callbackUrl:'/home'
       })
-      console.log(result);
-  
+      
       if(result?.error){
         toast({
           title:'Login Failed',
@@ -58,10 +58,6 @@ const Page = () => {
         })
         return;
       }
-  
-      router.push('/home');
-      
-
     } catch (error) {
       console.log('Error Loggin in User',error);
       toast({
