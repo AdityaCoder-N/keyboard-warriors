@@ -12,7 +12,7 @@ const GameInfoModal = ({
         <Card className='z-50 flex flex-col w-[400px] md:min-w-[400px] md:w-1/3 p-4 relative'>
 
             <X 
-              className='bg-red-400 absolute top-2 right-3 cursor-pointer'
+              className='bg-red-400 absolute top-2 right-3 cursor-pointer text-white'
               onClick={onClose}  
             />
             <h1 className='text-2xl font-bold mb-2'>How to Play?</h1>
@@ -35,6 +35,9 @@ const GameInfoModal = ({
                     <StopCircle className='h-8 w-8 border-0'/>
                 </div>
                 <p>Stops your opponents typing for 5 seconds, costs 35 points</p>
+            </div>
+            <div className='mt-3'>
+                * Minimum 2 players required, Game starts when everyone is ready *
             </div>
         </Card>
     </div>
